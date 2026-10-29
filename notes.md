@@ -25,3 +25,17 @@
 - **现象**：`count = sorted(count, key=lambda x: count[x], reverse=True)`排序正常，但是之后通过键获取值`count[ch]`时报错。`TypeError: list indices must be integers or slices, not str`列表的下标只能是整数或切片，不能是字符串。
 - **原因**：`sorted()`返回的是列表。字典排序后，只保留了键，没保留值。
 - **解决**：改成`items = sorted(count.items(), key=lambda x: x[1], reverse=True)`，`count.items()`将字典中的键值对打包成一对一对的元组(原字典键, 原字典值)。
+
+## 2026-10-29 · 文件按扩展名归档
+
+### 遍历文件夹时移动文件可能导致漏文件或报错
+
+- **现象**：`for file in path.iterdir():`遍历路径下所有文件或文件夹时，如果在遍历过程中改变目录结构（添加、移动、删除、重命名文件等），可能会导致有些文件没被处理到，或者偶尔报FileNotFoundError。
+- **原因**：`iterdir()`返回的是个惰性迭代器，依赖操作系统的目录游标，目录结构变化会导致游标错乱。
+- **解决**：将遍历结果转化为列表快照再循环`for file in list(path.iterdir()):`。
+
+### pathlib的replace()会让同名文件被静默覆盖
+
+- **现象**：`file.replace(target_file)`将文件移动到目标文件夹时，如果目标文件夹里已存在同名文件，原文件会被悄悄覆盖。
+- **原因**：`replace()`底层逻辑就是替换，不会检查目标路径是否已有文件。
+- **解决**：移动前加一步判断`if not target_file.exists():`。
