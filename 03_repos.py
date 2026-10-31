@@ -1,8 +1,8 @@
 import requests  # 需要安装requests库
 import csv
 
-# 向GitHub公开API发起GET请求（超时时间为10秒），获取用户qiwen-cn的公开仓库列表（返回Response对象，包含状态码、响应头、响应正文等信息）
-repos = requests.get("https://api.github.com/users/qiwen-cn/repos", timeout=10)
+# 向GitHub公开API发起GET请求（超时时间为10秒），获取用户torvalds的公开仓库列表（返回Response对象，包含状态码、响应头、响应正文等信息）
+repos = requests.get("https://api.github.com/users/torvalds/repos", timeout=10)
 
 # 确认请求成功（状态码为200表示成功）
 print("状态码:", repos.status_code)
