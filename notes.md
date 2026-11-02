@@ -14,11 +14,11 @@
 - **原因**：Python的字典不会给新键自动初始化。
 - **解决**：改成`count[ch] = count.get(ch, 0) + 1`，在键`ch`不存在时用默认值`0`。
 
-### 字频前几名全是标点
+### 字典使用切片报KeyError
 
-- **现象**：程序正常执行，但输出结果前几名是标点符号。
-- **原因**：没有过滤标点符号。
-- **解决**：只统计字母和数字`if ch.isalnum():`。
+- **现象**：字典使用切片时`print(count[:10])`报错。`KeyError: slice(None, 10, None)`，字典报错：找不到名为`[:10]`的键。
+- **原因**：字典不支持切片，只认键（Key）。在底层，`[:10]`会被转换成`slice(None, 10, None)`这个对象，字典把它当成了一个普通的键去查找，因为字典里没有这个键，所以抛出`KeyError`。
+- **解决**：先转成列表再切片。可以通过`sorted()`排序，排序后拿到的是列表。
 
 ### sorted()排序后，原字典没法再按键取值
 
@@ -85,6 +85,12 @@
 - **现象**：读取时第一列表头前面多出个`\ufeff`。
 - **原因**：文件开头有BOM标识时，如果读取不加`sig`，Python就会把BOM当成真实的文本内容读出来。
 - **解决**：读写CSV时统一使用`encoding="utf-8-sig"`。写时防Excel乱码，读时自动剥离BOM。
+
+### 使用sum()报TypeError
+
+- **现象**：使用`sum(data, key=lambda r: int(r[2]))`累计求和时报错。`TypeError: sum() got an unexpected keyword argument 'key'`，`sum()`收到了一个意外的关键字参数`'key'`。
+- **原因**：`sorted()`、`max()`、`min()`都有`key`参数，而`sum()`不支持`key`参数。
+- **解决**：使用生成器表达式`sum(int(r[2]) for r in data)`。
 
 ### CSV文件数据计算总和时报错
 
