@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>文章处理</title>
+</head>
+
+<body>
+    <textarea id="input" placeholder="输入文章"></textarea>
+    <button id="btn">点我进行文章摘要</button>
+    <p id="out"></p>
+
+    <script>
+        // 获取页面元素
+        const btn = document.getElementById("btn");
+        const inputArea = document.getElementById("input");
+        const outP = document.getElementById("out");
+
+        // 监听按钮点击事件
+        btn.addEventListener("click", async function () {
+            btn.disabled = true;  // 禁用按钮，防止重复点击
+            outP.innerText = "正在处理...";  // 显示处理状态
+
+            try {
+                const text = inputArea.value;  // 获取输入的文章内容
+
+                // 发送POST请求到后端的/summarize接口
+                const response = await fetch("/summarize", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ "text": text })  // 将JS对象转成JSON字符串（结构和后端请求体模型对应）
+                });
+
+                // 等待响应并解析响应数据为JSON
+                const data = await response.json();
+
+                // 检查响应状态，如果不成功则显示错误信息，否则显示AI生成的总结
+                if (!response.ok) {
+                    outP.innerText = "请求失败：" + (data.detail || response.status);
+                    return;
+                }
+                outP.innerText = data.summary;
+            } catch (e) {
+                outP.innerText = "请求异常：" + e.message;
+            } finally {
+                btn.disabled = false;  // 重新启用按钮
+            }
+        });
+
+    </script>
+</body>
+
+</html>

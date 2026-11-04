@@ -5,6 +5,7 @@ import requests  # 需要安装requests库
 # 需要安装fastapi库（用于构建Web API的现代Python框架）和uvicorn库（用于运行FastAPI应用）
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from fastapi.responses import FileResponse
 
 # DeepSeek API的基础URL和模型名称
 base_url = "https://api.deepseek.com/chat/completions"
@@ -61,3 +62,8 @@ def summarize(request: SummarizeRequest):
 
     # 返回摘要结果，作为JSON响应的一部分
     return {"summary": response_content}
+
+
+@app.get("/")
+def index():
+    return FileResponse("index.html")
